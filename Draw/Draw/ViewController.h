@@ -16,8 +16,6 @@
 - (IBAction)cleanAll:(UIButton *)sender;//清空按钮
 - (IBAction)setButton:(UIButton *)sender;//设置按钮
 
-
-
 @property (weak, nonatomic) IBOutlet UILabel *rollLabel;//滚动显示区
 @property (weak, nonatomic) IBOutlet UILabel *showLabel;//中奖显示区
 @property (strong, nonatomic) IBOutlet UITextView *showNumber;//所有中奖显示区
