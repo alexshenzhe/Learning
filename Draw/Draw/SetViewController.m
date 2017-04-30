@@ -8,7 +8,7 @@
 
 #import "SetViewController.h"
 
-@interface SetViewController ()
+@interface SetViewController () <UINavigationBarDelegate>
 
 
 @end
@@ -25,7 +25,4 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)backButton:(UIButton *)sender {
-    [self dismissViewControllerAnimated:YES completion:^{}];
-}
 @end

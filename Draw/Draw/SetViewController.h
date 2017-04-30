@@ -10,5 +10,4 @@
 
 @interface SetViewController : UIViewController
 
-- (IBAction)backButton:(UIButton *)sender;//返回按钮
 @end

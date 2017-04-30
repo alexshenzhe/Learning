@@ -7,57 +7,43 @@
 //
 
 #import "ViewController.h"
+#import "NumberRoll.h"
 
-@interface ViewController () {
-    NSInteger randomValue;
-    NSTimer *myTimer;
-    NSInteger showValue;
-    NSMutableString *allNumber;
-    NSInteger randomRange;
-}
+@interface ViewController () <NumberRollDelegate>
+
+@property (weak, nonatomic) IBOutlet UILabel *rollLabel; // 滚动显示区
+@property (weak, nonatomic) IBOutlet UILabel *showLabel; // 当前中奖显示区
+@property (strong, nonatomic) IBOutlet UITextView *showNumber; // 所有中奖显示区
+@property (weak, nonatomic) IBOutlet UITextField *rangeField; // 随机范围输入框
+
+- (IBAction)beginDraw:(UIButton *)sender; // 开始抽奖按钮
+- (IBAction)stopRoll:(UIButton *)sender; // 停止抽奖按钮
+- (IBAction)cleanAll:(UIButton *)sender; // 清空按钮
+- (IBAction)setButton:(UIButton *)sender; // 设置按钮
+
+@property (nonatomic, strong) NumberRoll *numberRoll;
+@property (nonatomic, copy) NSMutableString *allNumbers;
+@property (nonatomic, assign) NSInteger rangeNow;
 
 @end
 
 @implementation ViewController
-//生成随机数方法
-- (void)randomNumber {
-    if (randomRange == 0) {
-        randomValue = (arc4random() % 500) + 1;
-    }else {
-        randomValue = (arc4random() % randomRange) + 1;
-    }
-    
-}
-
-//更新Label文字的方法
-- (void)updateLabel {
-    self.rollLabel.text = [NSString stringWithFormat:@"%ld",randomValue];
-    self.showLabel.text = [NSString stringWithFormat:@"%ld",showValue];
-    self.showNumber.text = [NSString stringWithFormat:@"%@",allNumber];
-}
-
-//滚动显示方法
-- (void)rollshow {
-    int i = 0.1;
-    if (![myTimer isValid]) {
-        myTimer = [NSTimer scheduledTimerWithTimeInterval:i
-                                                   target:self
-                                                 selector:@selector(timerAction:)
-                                                 userInfo:nil
-                                                  repeats:YES];
-    }
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    if (allNumber == nil) {
-        allNumber = [NSMutableString stringWithFormat:@"本次中奖号码:"];
+    
+    self.numberRoll = [[NumberRoll alloc] init];
+    self.numberRoll.delegate = self;
+
+    if (self.allNumbers == nil) {
+        self.allNumbers = [NSMutableString stringWithFormat:@"本次中奖号码:"];
     }
-    [self updateLabel];
+    [self updateResultsLabel];
+    [self updateRollLabel];
     
     // 创建自定义的触摸手势来实现对键盘的隐藏
-    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                            action:@selector(viewTapped:)];
     tapGr.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapGr];
 }
@@ -67,48 +53,74 @@
     // Dispose of any resources that can be recreated.
 }
 
-//重新开始方法
+// 更新中奖信息Label文字的方法
+- (void)updateResultsLabel {
+    self.showLabel.text = [NSString stringWithFormat:@"%ld", self.rangeNow];
+    self.showNumber.text = [NSString stringWithFormat:@"%@", self.allNumbers];
+}
+
+// 更新滚动Label文字的方法
+- (void)updateRollLabel {
+    self.rollLabel.text = [NSString stringWithFormat:@"%ld", self.rangeNow];
+}
+
+// 重新开始方法
 - (void)startAgain {
-    randomValue = 0;
-    showValue = 0;
-    allNumber = [NSMutableString stringWithFormat:@"本次中奖号码:"];
-    [self updateLabel];
+    self.rangeNow = 0;
+    self.allNumbers = [NSMutableString stringWithFormat:@"本次中奖号码:"];
+    [self updateResultsLabel];
+    [self updateRollLabel];
 }
 
-//开始抽奖按钮的方法
+// 开始抽奖按钮
 - (IBAction)beginDraw:(UIButton *)sender {
-    [self rollshow];
-
+    [self.numberRoll startRoll];
 }
 
-//停止抽奖按钮的方法
+// 停止抽奖按钮的方法
 - (IBAction)stopRoll:(UIButton *)sender {
-    //先判断定时器是否在运行
-    if ([myTimer isValid]) {
-        [myTimer invalidate];//关闭定时器
-        myTimer = nil;//释放myTimer对象
-        
-        //拼接字符串，将产生的中奖号码进行拼接
-        allNumber = [NSMutableString stringWithFormat:@"%@ %ld",allNumber,randomValue];
-    }
-    showValue = randomValue;
-    [self updateLabel];
+    self.rangeNow = [self.numberRoll stopRoll];
+    [self updateRollLabel];
+//    拼接字符串，将产生的中奖号码进行拼接
+    self.allNumbers = [NSMutableString stringWithFormat:@"%@ %ld", self.allNumbers, self.rangeNow];
+    [self updateResultsLabel];
 }
 
-//定时器的方法
-- (void)timerAction:(NSTimer *)timer {
-    [self randomNumber];
-    [self updateLabel];
-}
-
-
-//清除按钮的方法
+// 清除按钮的方法
 - (IBAction)cleanAll:(UIButton *)sender {
     //提示框
     NSString *title = @"清除数据";
     NSString *message = @"注意！中奖号码清除以后将不能恢复！";
     NSString *cancelButtonTitle = NSLocalizedString(@"取消", nil);
     NSString *otherButtonTitle = NSLocalizedString(@"确定", nil);
+    [self showAlertBoxText:title message:message cancelButtonTitle:cancelButtonTitle otherButtonTitle:otherButtonTitle ifClean:YES setRange:self.rangeNow];
+}
+
+// 设置按钮的方法
+- (IBAction)setButton:(UIButton *)sender {
+    // 设置一个临时变量
+    NSInteger tempRange = [self.rangeField.text integerValue];
+
+    if (tempRange > 1) {
+        // 提示框
+        NSString *title = @"确认";
+        NSString *message = [NSString stringWithFormat:@"请点击确定按钮确认将抽奖人数设置成%ld人", tempRange];
+        NSString *cancelButtonTitle = NSLocalizedString(@"取消", nil);;
+        NSString *otherButtonTitle = NSLocalizedString(@"确定", nil);
+        [self showAlertBoxText:title message:message cancelButtonTitle:cancelButtonTitle otherButtonTitle:otherButtonTitle ifClean:NO setRange:tempRange];
+    } else if (tempRange <= 1) {
+        // 提示框
+        NSString *title = @"提示";
+        NSString *message = @"人数必须大于1人抽奖才有效！！！";
+        NSString *cancelButtonTitle = NSLocalizedString(@"取消", nil);
+        NSString *otherButtonTitle = NSLocalizedString(@"确定", nil);
+        [self showAlertBoxText:title message:message cancelButtonTitle:cancelButtonTitle otherButtonTitle:otherButtonTitle ifClean:NO setRange:self.rangeNow];
+    }
+}
+
+// 显示警告提示框
+- (void)showAlertBoxText:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitle:(NSString *)otherButtonTitle ifClean:(BOOL)clean setRange:(NSInteger)range {
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
                                                                              message:message
                                                                       preferredStyle:UIAlertControllerStyleAlert];
@@ -118,56 +130,29 @@
     UIAlertAction *otherAction = [UIAlertAction actionWithTitle:otherButtonTitle
                                                           style:UIAlertActionStyleDefault
                                                         handler:^(UIAlertAction *action) {
-                                                            [self startAgain];
+                                                            if (clean) {
+                                                                [self startAgain];
+                                                            } else {
+                                                                [self.numberRoll setRangeToRandom:range]; // 传递抽奖人数
+                                                            }
+                                                            self.rangeField.text = nil;
                                                         }];
     [alertController addAction:cancelAction];
     [alertController addAction:otherAction];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+// 键盘隐藏的方法
+-(void)viewTapped:(UITapGestureRecognizer*)tapGr {
+    [self.rangeField resignFirstResponder];
+}
+
+#pragma mark - NumberRollDelegate
+
+- (void)numIsChangedTo:(NSInteger)num {
+    self.rangeNow = num;
+    [self updateRollLabel];
     
 }
 
-//设置按钮的方法
-- (IBAction)setButton:(UIButton *)sender {
-    //设置一个临时变量
-    NSInteger rangeNow = [self.rangeField.text integerValue];
-
-    if (rangeNow > 1) {
-        randomRange = rangeNow;
-        //提示框
-        NSString *title = @"设置成功";
-        NSInteger text = [self.rangeField.text integerValue];
-        NSString *message = [NSString stringWithFormat:@"您已经成功将抽奖人数设置成%ld人",text];
-        NSString *otherButtonTitle = NSLocalizedString(@"确定", nil);
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
-                                                                                 message:message
-                                                                          preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *otherAction = [UIAlertAction actionWithTitle:otherButtonTitle
-                                                              style:UIAlertActionStyleDefault
-                                                            handler:^(UIAlertAction *action) {
-                                                                self.rangeField.text = nil;
-                                                            }];
-        [alertController addAction:otherAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }else if (rangeNow <= 1) {
-        //提示框
-        NSString *title = @"提示";
-        NSString *message = @"大哥，请确认人数以后再输入！\n人数要大于1人！！！";
-        NSString *otherButtonTitle = NSLocalizedString(@"确定", nil);
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
-                                                                                 message:message
-                                                                          preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *otherAction = [UIAlertAction actionWithTitle:otherButtonTitle
-                                                              style:UIAlertActionStyleDefault
-                                                            handler:^(UIAlertAction *action) {
-                                                                self.rangeField.text = nil;
-                                                            }];
-        [alertController addAction:otherAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
-}
-
-//键盘隐藏的方法
--(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    [self.rangeField resignFirstResponder];
-}
 @end

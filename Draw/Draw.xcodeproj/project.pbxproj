@@ -13,6 +13,7 @@
 		FA0E419E1C891BF000798F06 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0E419C1C891BF000798F06 /* Main.storyboard */; };
 		FA0E41A01C891BF000798F06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0E419F1C891BF000798F06 /* Assets.xcassets */; };
 		FA0E41A31C891BF000798F06 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0E41A11C891BF000798F06 /* LaunchScreen.storyboard */; };
+		FA6D2DF91E5EFBDB0063AF33 /* NumberRoll.m in Sources */ = {isa = PBXBuildFile; fileRef = FA6D2DF81E5EFBDB0063AF33 /* NumberRoll.m */; };
 		FAFAE1981C8EA19A000D8153 /* SetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFAE1971C8EA19A000D8153 /* SetViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,8 @@
 		FA0E419F1C891BF000798F06 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA0E41A21C891BF000798F06 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA0E41A41C891BF000798F06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA6D2DF71E5EFBDB0063AF33 /* NumberRoll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberRoll.h; path = ../NumberRoll.h; sourceTree = "<group>"; };
+		FA6D2DF81E5EFBDB0063AF33 /* NumberRoll.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberRoll.m; path = ../NumberRoll.m; sourceTree = "<group>"; };
 		FAFAE1961C8EA19A000D8153 /* SetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetViewController.h; sourceTree = "<group>"; };
 		FAFAE1971C8EA19A000D8153 /* SetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,16 +64,7 @@
 		FA0E41921C891BF000798F06 /* Draw */ = {
 			isa = PBXGroup;
 			children = (
-				FA0E41961C891BF000798F06 /* AppDelegate.h */,
-				FA0E41971C891BF000798F06 /* AppDelegate.m */,
-				FA0E41991C891BF000798F06 /* ViewController.h */,
-				FA0E419A1C891BF000798F06 /* ViewController.m */,
-				FAFAE1961C8EA19A000D8153 /* SetViewController.h */,
-				FAFAE1971C8EA19A000D8153 /* SetViewController.m */,
-				FA0E419C1C891BF000798F06 /* Main.storyboard */,
-				FA0E419F1C891BF000798F06 /* Assets.xcassets */,
-				FA0E41A11C891BF000798F06 /* LaunchScreen.storyboard */,
-				FA0E41A41C891BF000798F06 /* Info.plist */,
+				FAFE69A81DB3442E0045CE0B /* Class */,
 				FA0E41931C891BF000798F06 /* Supporting Files */,
 			);
 			path = Draw;
@@ -79,9 +73,60 @@
 		FA0E41931C891BF000798F06 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				FA0E419F1C891BF000798F06 /* Assets.xcassets */,
+				FA0E419C1C891BF000798F06 /* Main.storyboard */,
+				FA0E41A11C891BF000798F06 /* LaunchScreen.storyboard */,
+				FA0E41A41C891BF000798F06 /* Info.plist */,
 				FA0E41941C891BF000798F06 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FA58CE131CED79EA0085D8F5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FA6D2DF71E5EFBDB0063AF33 /* NumberRoll.h */,
+				FA6D2DF81E5EFBDB0063AF33 /* NumberRoll.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		FAFE69A61DB3440E0045CE0B /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				FA0E41991C891BF000798F06 /* ViewController.h */,
+				FA0E419A1C891BF000798F06 /* ViewController.m */,
+				FAFAE1961C8EA19A000D8153 /* SetViewController.h */,
+				FAFAE1971C8EA19A000D8153 /* SetViewController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		FAFE69A71DB344200045CE0B /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				FA0E41961C891BF000798F06 /* AppDelegate.h */,
+				FA0E41971C891BF000798F06 /* AppDelegate.m */,
+			);
+			name = Others;
+			sourceTree = "<group>";
+		};
+		FAFE69A81DB3442E0045CE0B /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				FAFE69A91DB3443E0045CE0B /* View */,
+				FAFE69A71DB344200045CE0B /* Others */,
+				FAFE69A61DB3440E0045CE0B /* Controller */,
+				FA58CE131CED79EA0085D8F5 /* Model */,
+			);
+			name = Class;
+			sourceTree = "<group>";
+		};
+		FAFE69A91DB3443E0045CE0B /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,6 +204,7 @@
 				FAFAE1981C8EA19A000D8153 /* SetViewController.m in Sources */,
 				FA0E41981C891BF000798F06 /* AppDelegate.m in Sources */,
 				FA0E41951C891BF000798F06 /* main.m in Sources */,
+				FA6D2DF91E5EFBDB0063AF33 /* NumberRoll.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +315,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Draw/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexshenzhe.Draw;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -280,6 +327,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Draw/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexshenzhe.Draw;
 				PRODUCT_NAME = "$(TARGET_NAME)";
